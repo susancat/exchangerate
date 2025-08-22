@@ -51,7 +51,8 @@ jobs:
 
       - name: Deploy Lambda
         run: |
-          zip function.zip lambda_function.py
+          zip -r function.zip lambda_function.py
+          ls -lh function.zip  # ✅ 確認 zip 檔是否正確
           aws lambda update-function-code \
-            --function-name exchangeRate
+            --function-name exchangeRate \
             --zip-file fileb://function.zip
