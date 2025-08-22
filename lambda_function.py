@@ -7,26 +7,30 @@ from decimal import Decimal
 
 def lambda_handler(event, context):
     # call API
-    url = 'https://open.er-api.com/v6/latest/USD'
+    url = 'https://api.exchangerate-api.com/v4/latest/USD'
     response = urllib.request.urlopen(url)
     data = json.loads(response.read())
 
     # fetch the exchange rate and date
-    rate = data["rates"]["TWD"]
-    today = datetime.utcnow().strftime('%Y-%m-%d')
+    usd_to_twd = data['rates'].get('TWD')
+    hkd_to_twd = data['rates'].get('TWD') / data['rates'].get('HKD')
 
     # write to DynamoDB
     dynamodb = boto3.resource('dynamodb')
-    table = dynamodb.Table('ExchangeRates')
+    table = dynamodb.Table('ExchangeRateTable')
+    timestamp = datetime.utcnow().isoformat()
 
     table.put_item(Item={
-        'date': today,
-        'usd_to_twd': Decimal(str(rate))  # 👈 use Decimal to convert float
+        'timestamp': timestamp,
+        'usd_to_twd': Decimal(str(usd_to_twd)),
+        'hkd_to_twd': Decimal(str(hkd_to_twd))
     })
-
-    print(f"Wrote USD→TWD {rate} for {today} to DynamoDB")
 
     return {
         'statusCode': 200,
-        'body': json.dumps({'date': today, 'usd_to_twd': float(rate)})
+        'body': json.dumps({
+            'usd_to_twd': usd_to_twd,
+            'hkd_to_twd': round(hkd_to_twd, 4),
+            'timestamp': timestamp
+        })
     }
