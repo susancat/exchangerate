@@ -1,12 +1,10 @@
-# import pytest
 from lambda_function import lambda_handler
 from unittest.mock import patch, MagicMock
 import json
 
+
 @patch('urllib.request.urlopen')
 @patch('boto3.resource')
-
-
 def test_lambda_handler_success(mock_boto3_resource, mock_urlopen):
     # 模擬 API 回傳資料
     mock_response = MagicMock()
