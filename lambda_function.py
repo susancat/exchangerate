@@ -2,7 +2,7 @@ import json
 import urllib.request
 import boto3
 from datetime import datetime
-from decimal import Decimal 
+from decimal import Decimal
 
 def lambda_handler(event, context):
     # call API
