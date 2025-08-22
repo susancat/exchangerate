@@ -4,6 +4,7 @@ import boto3
 from datetime import datetime
 from decimal import Decimal
 
+
 def lambda_handler(event, context):
     # call API
     url = 'https://open.er-api.com/v6/latest/USD'
