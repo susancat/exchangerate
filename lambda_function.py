@@ -18,12 +18,14 @@ def lambda_handler(event, context):
     # write to DynamoDB
     dynamodb = boto3.resource('dynamodb')
     table = dynamodb.Table('ExchangeRates')
+    today = datetime.utcnow().strftime('%Y-%m-%d')  # ✅ 定義主鍵欄位
     timestamp = datetime.utcnow().isoformat()
 
     table.put_item(Item={
-        'timestamp': timestamp,
+        'date': today,  
         'usd_to_twd': Decimal(str(usd_to_twd)),
-        'hkd_to_twd': Decimal(str(hkd_to_twd))
+        'hkd_to_twd': Decimal(str(hkd_to_twd)),
+        'timestamp': timestamp  # 可以保留作為附加欄位
     })
 
     return {
