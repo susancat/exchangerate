@@ -17,7 +17,7 @@ def lambda_handler(event, context):
 
     # write to DynamoDB
     dynamodb = boto3.resource('dynamodb')
-    table = dynamodb.Table('ExchangeRateTable')
+    table = dynamodb.Table('ExchangeRates')
     timestamp = datetime.utcnow().isoformat()
 
     table.put_item(Item={
