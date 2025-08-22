@@ -3,17 +3,15 @@ from lambda_function import lambda_handler
 from unittest.mock import patch, MagicMock
 import json
 
-@patch('urllib.request.urlopen')
-@patch('boto3.resource')
+
+@patch("urllib.request.urlopen")
+@patch("boto3.resource")
 def test_lambda_handler_success(mock_boto3_resource, mock_urlopen):
     # 模擬 API 回傳資料
     mock_response = MagicMock()
-    mock_response.read.return_value = json.dumps({
-        "rates": {
-            "TWD": 32.5,
-            "HKD": 7.8
-        }
-    }).encode('utf-8')
+    mock_response.read.return_value = json.dumps(
+        {"rates": {"TWD": 32.5, "HKD": 7.8}}
+    ).encode("utf-8")
     mock_urlopen.return_value = mock_response
 
     # 模擬 DynamoDB 寫入
@@ -28,7 +26,7 @@ def test_lambda_handler_success(mock_boto3_resource, mock_urlopen):
     # 驗證 response
     assert result["statusCode"] == 200
     body = json.loads(result["body"])
-    
+
     # ✅ 驗證 USD→TWD 是否存在且為 float
     assert "usd_to_twd" in body
     assert isinstance(body["usd_to_twd"], float)
